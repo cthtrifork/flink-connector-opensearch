@@ -103,11 +103,12 @@ class OpensearchWriter<IN> implements SinkWriter<IN> {
             BulkProcessorConfig bulkProcessorConfig,
             NetworkClientConfig networkClientConfig,
             SinkWriterMetricGroup metricGroup,
+            RestHighLevelClientProvider restClientProvider,
             MailboxExecutor mailboxExecutor) {
         this.emitter = checkNotNull(emitter);
         this.flushOnCheckpoint = flushOnCheckpoint;
         this.mailboxExecutor = checkNotNull(mailboxExecutor);
-        this.client =
+        this.client = restClientProvider != null ? restClientProvider.getProvider(hosts, networkClientConfig) : 
                 new RestHighLevelClient(
                         configureRestClientBuilder(
                                 RestClient.builder(hosts.toArray(new HttpHost[0])),
