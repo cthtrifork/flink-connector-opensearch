@@ -103,16 +103,18 @@ class OpensearchWriter<IN> implements SinkWriter<IN> {
             BulkProcessorConfig bulkProcessorConfig,
             NetworkClientConfig networkClientConfig,
             SinkWriterMetricGroup metricGroup,
-            RestHighLevelClientProvider restClientProvider,
-            MailboxExecutor mailboxExecutor) {
+            MailboxExecutor mailboxExecutor,
+            RestHighLevelClientProvider restClientProvider) {
         this.emitter = checkNotNull(emitter);
         this.flushOnCheckpoint = flushOnCheckpoint;
         this.mailboxExecutor = checkNotNull(mailboxExecutor);
-        this.client = restClientProvider != null ? restClientProvider.getProvider(hosts, networkClientConfig) : 
-                new RestHighLevelClient(
-                        configureRestClientBuilder(
-                                RestClient.builder(hosts.toArray(new HttpHost[0])),
-                                networkClientConfig));
+        this.client =
+                restClientProvider != null
+                        ? restClientProvider.getProvider(hosts, networkClientConfig)
+                        : new RestHighLevelClient(
+                                configureRestClientBuilder(
+                                        RestClient.builder(hosts.toArray(new HttpHost[0])),
+                                        networkClientConfig));
         this.bulkProcessor = createBulkProcessor(bulkProcessorConfig);
         this.requestIndexer = new DefaultRequestIndexer(metricGroup.getNumRecordsSendCounter());
         checkNotNull(metricGroup);
@@ -308,9 +310,11 @@ class OpensearchWriter<IN> implements SinkWriter<IN> {
 
     private void enqueueActionInMailbox(
             ThrowingRunnable<? extends Exception> action, String actionName) {
-        // If the writer is cancelled before the last bulk response (i.e. no flush on checkpoint
+        // If the writer is cancelled before the last bulk response (i.e. no flush on
+        // checkpoint
         // configured or shutdown without a final
-        // checkpoint) the mailbox might already be shutdown, so we should not enqueue any
+        // checkpoint) the mailbox might already be shutdown, so we should not enqueue
+        // any
         // actions.
         if (isClosed()) {
             return;

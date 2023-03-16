@@ -287,13 +287,14 @@ public class OpensearchSinkBuilder<IN> {
     }
 
     /**
-     * Allows to set custom RestClient provider. If not set, then the default RestHighLevelClient will be
-     * used.
+     * Allows to set custom RestClient provider. If not set, then the default RestHighLevelClient
+     * will be used.
      *
      * @param restClientProvider the custom provider
      * @return this builder
      */
-    public OpensearchSinkBuilder<IN> setRestClientProvider(RestHighLevelClientProvider restClientProvider) {
+    public OpensearchSinkBuilder<IN> setRestClientProvider(
+            RestHighLevelClientProvider restClientProvider) {
         this.restClientProvider = restClientProvider;
         return self();
     }
@@ -311,7 +312,12 @@ public class OpensearchSinkBuilder<IN> {
         BulkProcessorConfig bulkProcessorConfig = buildBulkProcessorConfig();
 
         return new OpensearchSink<>(
-                hosts, emitter, deliveryGuarantee, bulkProcessorConfig, networkClientConfig, restClientProvider);
+                hosts,
+                emitter,
+                deliveryGuarantee,
+                bulkProcessorConfig,
+                networkClientConfig,
+                restClientProvider);
     }
 
     private NetworkClientConfig buildNetworkClientConfig() {

@@ -20,11 +20,15 @@ package org.apache.flink.connector.opensearch.sink;
 
 import org.apache.flink.annotation.PublicEvolving;
 
-import java.io.Serializable;
+import org.apache.http.HttpHost;
+import org.opensearch.client.RestHighLevelClient;
 
-/** Custom RestHighLevelClient provider */
-@PublicEvolving
+import java.io.Serializable;
+import java.util.List;
+
+/** Custom RestHighLevelClient provider. */
 @FunctionalInterface
+@PublicEvolving
 public interface RestHighLevelClientProvider extends Serializable {
     RestHighLevelClient getProvider(List<HttpHost> hosts, NetworkClientConfig networkClientConfig);
 }
