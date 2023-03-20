@@ -66,8 +66,8 @@ class OpensearchWriterITCase {
     private static final Logger LOG = LoggerFactory.getLogger(OpensearchWriterITCase.class);
 
     @Container
-    private static final OpensearchContainer OS_CONTAINER =
-            OpensearchUtil.createOpensearchContainer(DockerImageVersions.OPENSEARCH_1, LOG);
+    private static final OpensearchContainer OS_CONTAINER = OpensearchUtil
+            .createOpensearchContainer(DockerImageVersions.OPENSEARCH_1, LOG);
 
     private RestHighLevelClient client;
     private OpensearchTestClient context;
@@ -91,11 +91,10 @@ class OpensearchWriterITCase {
     void testWriteOnBulkFlush() throws Exception {
         final String index = "test-bulk-flush-without-checkpoint";
         final int flushAfterNActions = 5;
-        final BulkProcessorConfig bulkProcessorConfig =
-                new BulkProcessorConfig(flushAfterNActions, -1, -1, FlushBackoffType.NONE, 0, 0);
+        final BulkProcessorConfig bulkProcessorConfig = new BulkProcessorConfig(flushAfterNActions, -1, -1,
+                FlushBackoffType.NONE, 0, 0);
 
-        try (final OpensearchWriter<Tuple2<Integer, String>> writer =
-                createWriter(index, false, bulkProcessorConfig)) {
+        try (final OpensearchWriter<Tuple2<Integer, String>> writer = createWriter(index, false, bulkProcessorConfig)) {
             writer.write(Tuple2.of(1, buildMessage(1)), null);
             writer.write(Tuple2.of(2, buildMessage(2)), null);
             writer.write(Tuple2.of(3, buildMessage(3)), null);
@@ -124,11 +123,10 @@ class OpensearchWriterITCase {
         final String index = "test-bulk-flush-with-interval";
 
         // Configure bulk processor to flush every 1s;
-        final BulkProcessorConfig bulkProcessorConfig =
-                new BulkProcessorConfig(-1, -1, 1000, FlushBackoffType.NONE, 0, 0);
+        final BulkProcessorConfig bulkProcessorConfig = new BulkProcessorConfig(-1, -1, 1000, FlushBackoffType.NONE, 0,
+                0);
 
-        try (final OpensearchWriter<Tuple2<Integer, String>> writer =
-                createWriter(index, false, bulkProcessorConfig)) {
+        try (final OpensearchWriter<Tuple2<Integer, String>> writer = createWriter(index, false, bulkProcessorConfig)) {
             writer.write(Tuple2.of(1, buildMessage(1)), null);
             writer.write(Tuple2.of(2, buildMessage(2)), null);
             writer.write(Tuple2.of(3, buildMessage(3)), null);
@@ -142,12 +140,11 @@ class OpensearchWriterITCase {
     @Test
     void testWriteOnCheckpoint() throws Exception {
         final String index = "test-bulk-flush-with-checkpoint";
-        final BulkProcessorConfig bulkProcessorConfig =
-                new BulkProcessorConfig(-1, -1, -1, FlushBackoffType.NONE, 0, 0);
+        final BulkProcessorConfig bulkProcessorConfig = new BulkProcessorConfig(-1, -1, -1, FlushBackoffType.NONE, 0,
+                0);
 
         // Enable flush on checkpoint
-        try (final OpensearchWriter<Tuple2<Integer, String>> writer =
-                createWriter(index, true, bulkProcessorConfig)) {
+        try (final OpensearchWriter<Tuple2<Integer, String>> writer = createWriter(index, true, bulkProcessorConfig)) {
             writer.write(Tuple2.of(1, buildMessage(1)), null);
             writer.write(Tuple2.of(2, buildMessage(2)), null);
             writer.write(Tuple2.of(3, buildMessage(3)), null);
@@ -164,17 +161,16 @@ class OpensearchWriterITCase {
     @Test
     void testIncrementByteOutMetric() throws Exception {
         final String index = "test-inc-byte-out";
-        final OperatorIOMetricGroup operatorIOMetricGroup =
-                UnregisteredMetricGroups.createUnregisteredOperatorMetricGroup().getIOMetricGroup();
-        final InternalSinkWriterMetricGroup metricGroup =
-                InternalSinkWriterMetricGroup.mock(
-                        metricListener.getMetricGroup(), operatorIOMetricGroup);
+        final OperatorIOMetricGroup operatorIOMetricGroup = UnregisteredMetricGroups
+                .createUnregisteredOperatorMetricGroup().getIOMetricGroup();
+        final InternalSinkWriterMetricGroup metricGroup = InternalSinkWriterMetricGroup.mock(
+                metricListener.getMetricGroup(), operatorIOMetricGroup);
         final int flushAfterNActions = 2;
-        final BulkProcessorConfig bulkProcessorConfig =
-                new BulkProcessorConfig(flushAfterNActions, -1, -1, FlushBackoffType.NONE, 0, 0);
+        final BulkProcessorConfig bulkProcessorConfig = new BulkProcessorConfig(flushAfterNActions, -1, -1,
+                FlushBackoffType.NONE, 0, 0);
 
-        try (final OpensearchWriter<Tuple2<Integer, String>> writer =
-                createWriter(index, false, bulkProcessorConfig, metricGroup)) {
+        try (final OpensearchWriter<Tuple2<Integer, String>> writer = createWriter(index, false, bulkProcessorConfig,
+                metricGroup)) {
             final Counter numBytesOut = operatorIOMetricGroup.getNumBytesOutCounter();
             assertThat(numBytesOut.getCount()).isEqualTo(0);
             writer.write(Tuple2.of(1, buildMessage(1)), null);
@@ -197,13 +193,11 @@ class OpensearchWriterITCase {
     void testIncrementRecordsSendMetric() throws Exception {
         final String index = "test-inc-records-send";
         final int flushAfterNActions = 2;
-        final BulkProcessorConfig bulkProcessorConfig =
-                new BulkProcessorConfig(flushAfterNActions, -1, -1, FlushBackoffType.NONE, 0, 0);
+        final BulkProcessorConfig bulkProcessorConfig = new BulkProcessorConfig(flushAfterNActions, -1, -1,
+                FlushBackoffType.NONE, 0, 0);
 
-        try (final OpensearchWriter<Tuple2<Integer, String>> writer =
-                createWriter(index, false, bulkProcessorConfig)) {
-            final Optional<Counter> recordsSend =
-                    metricListener.getCounter(MetricNames.NUM_RECORDS_SEND);
+        try (final OpensearchWriter<Tuple2<Integer, String>> writer = createWriter(index, false, bulkProcessorConfig)) {
+            final Optional<Counter> recordsSend = metricListener.getCounter(MetricNames.NUM_RECORDS_SEND);
             writer.write(Tuple2.of(1, buildMessage(1)), null);
             // Update existing index
             writer.write(Tuple2.of(1, "u" + buildMessage(2)), null);
@@ -221,13 +215,11 @@ class OpensearchWriterITCase {
     void testCurrentSendTime() throws Exception {
         final String index = "test-current-send-time";
         final int flushAfterNActions = 2;
-        final BulkProcessorConfig bulkProcessorConfig =
-                new BulkProcessorConfig(flushAfterNActions, -1, -1, FlushBackoffType.NONE, 0, 0);
+        final BulkProcessorConfig bulkProcessorConfig = new BulkProcessorConfig(flushAfterNActions, -1, -1,
+                FlushBackoffType.NONE, 0, 0);
 
-        try (final OpensearchWriter<Tuple2<Integer, String>> writer =
-                createWriter(index, false, bulkProcessorConfig)) {
-            final Optional<Gauge<Long>> currentSendTime =
-                    metricListener.getGauge("currentSendTime");
+        try (final OpensearchWriter<Tuple2<Integer, String>> writer = createWriter(index, false, bulkProcessorConfig)) {
+            final Optional<Gauge<Long>> currentSendTime = metricListener.getGauge("currentSendTime");
             writer.write(Tuple2.of(1, buildMessage(1)), null);
             writer.write(Tuple2.of(2, buildMessage(2)), null);
 
@@ -266,7 +258,8 @@ class OpensearchWriterITCase {
                         null,
                         true),
                 metricGroup,
-                new TestMailbox());
+                new TestMailbox(),
+                null);
     }
 
     private static class UpdatingEmitter implements OpensearchEmitter<Tuple2<Integer, String>> {
@@ -292,20 +285,17 @@ class OpensearchWriterITCase {
             final char action = element.f1.charAt(0);
             final String id = element.f0.toString();
             switch (action) {
-                case 'd':
-                    {
-                        indexer.add(new DeleteRequest(index).id(id));
-                        break;
-                    }
-                case 'u':
-                    {
-                        indexer.add(new UpdateRequest().index(index).id(id).doc(document));
-                        break;
-                    }
-                default:
-                    {
-                        indexer.add(new IndexRequest(index).id(id).source(document));
-                    }
+                case 'd': {
+                    indexer.add(new DeleteRequest(index).id(id));
+                    break;
+                }
+                case 'u': {
+                    indexer.add(new UpdateRequest().index(index).id(id).doc(document));
+                    break;
+                }
+                default: {
+                    indexer.add(new IndexRequest(index).id(id).source(document));
+                }
             }
         }
     }
