@@ -43,13 +43,6 @@ under the License.
 		</license>
 	</licenses>
 
-	<scm>
-		<url>https://github.com/apache/flink-connector-opensearch</url>
-		<connection>git@github.com:apache/flink-connector-opensearch.git</connection>
-		<developerConnection>
-			scm:git:https://gitbox.apache.org/repos/asf/flink-connector-opensearch.git
-		</developerConnection>
-	</scm>
 
 	<modules>
 		<module>flink-connector-opensearch</module>
@@ -75,6 +68,8 @@ under the License.
 		<log4j.version>2.17.2</log4j.version>
 
 		<flink.parent.artifactId>flink-connector-opensearch-parent</flink.parent.artifactId>
+
+		<git.repository>trifork/flink-connector-opensearch</git.repository>
 	</properties>
 
 	<dependencies>
@@ -422,4 +417,42 @@ under the License.
 				</plugin>
 			</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<distributionManagement>
+				<repository>
+					<id>local-file-repo</id>
+					<name>Local File Artifactory</name>
+					<url>file://${project.basedir}/dist</url>
+				</repository>
+				<snapshotRepository>
+					<id>local-file-repo</id>
+					<name>Local File Artifactory</name>
+					<url>file://${project.basedir}/dist</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>release</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+                	<name>useGithubRepository</name>
+                	<value>true</value>
+            	</property>
+			</activation>
+			<distributionManagement>
+				<repository>
+					<id>github</id>
+					<name>GitHub</name>
+					<url>https://maven.pkg.github.com/${git.repository}</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+
 </project>

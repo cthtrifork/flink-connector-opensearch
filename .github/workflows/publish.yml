@@ -1,0 +1,15 @@
+name: Maven Snapshot
+
+on:
+  push:
+    branches:
+      - main
+      - 'fix/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: trifork/cheetah-infrastructure-utils/.github/workflows/maven-snapshot.yml@main
