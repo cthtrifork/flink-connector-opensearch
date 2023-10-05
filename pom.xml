@@ -54,6 +54,7 @@ under the License.
 
 		<slf4j.version>1.7.36</slf4j.version>
 		<log4j.version>2.17.2</log4j.version>
+		<opensearch.version>1.3.0</opensearch.version>
 
 		<flink.parent.artifactId>flink-connector-opensearch-parent</flink.parent.artifactId>
 
@@ -178,6 +179,127 @@ under the License.
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-architecture-tests-production</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Core -->
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-base</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-java</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Table ecosystem -->
+
+		<!-- Projects depending on this project won't depend on flink-table-*. -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table-api-java-bridge</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Opensearch -->
+
+		<dependency>
+			<groupId>org.opensearch</groupId>
+			<artifactId>opensearch</artifactId>
+			<version>${opensearch.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opensearch.client</groupId>
+			<artifactId>opensearch-rest-high-level-client</artifactId>
+			<version>${opensearch.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpcore-nio</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- We need to include httpcore-nio again in the correct version due to the exclusion above -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore-nio</artifactId>
+			<version>4.4.12</version>
+		</dependency>
+
+		<!-- Tests -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-test-utils</artifactId>
+			<version>${flink.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-runtime</artifactId>
+			<version>${flink.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-java</artifactId>
+			<version>${flink.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>
+
+		<!-- Opensearch table descriptor testing -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table-common</artifactId>
+			<version>${flink.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Opensearch table sink factory testing -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-json</artifactId>
+			<version>${flink.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Table API integration tests -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table-test-utils</artifactId>
+			<version>${flink.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!--
+			Including Log4j2 dependencies for tests is required for the
+			embedded Opensearch nodes used in tests to run correctly.
+		-->
+
+		<dependency>
+			<groupId>org.opensearch</groupId>
+			<artifactId>opensearch-testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ArchUit test dependencies -->
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-architecture-tests-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -354,43 +476,13 @@ under the License.
 
 	<build>
 		<plugins>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<inherited>false</inherited>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.flink</groupId>
-						<artifactId>flink-ci-tools</artifactId>
-						<version>${flink.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 			</plugin>
-
-			<plugin>
-				<!-- activate API compatibility checks -->
-				<groupId>io.github.zentol.japicmp</groupId>
-				<artifactId>japicmp-maven-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.rat</groupId>
-				<artifactId>apache-rat-plugin</artifactId>
-				<inherited>false</inherited>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>com.diffplug.spotless</groupId>
-				<artifactId>spotless-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -411,12 +503,7 @@ under the License.
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 			</plugin>
-
-			<plugin>
-				<groupId>org.commonjava.maven.plugins</groupId>
-				<artifactId>directory-maven-plugin</artifactId>
-				</plugin>
-			</plugins>
+		</plugins>
 	</build>
 	<profiles>
 		<profile>
