@@ -17,10 +17,10 @@
 ################################################################################
 
 name: Nightly
+
 on:
-  schedule:
-    - cron: "0 0 * * 0"
   workflow_dispatch:
+
 jobs:
   compile_and_test:
     if: github.repository_owner == 'apache'
