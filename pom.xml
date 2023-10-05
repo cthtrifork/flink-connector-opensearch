@@ -19,18 +19,15 @@ under the License.
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<parent>
-		<groupId>org.apache.flink</groupId>
-		<artifactId>flink-connector-parent</artifactId>
-		<version>1.0.0</version>
-	</parent>
-
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>flink-connector-opensearch-parent</artifactId>
+	<groupId>com.trifork.cheetah.processing</groupId>
+	<artifactId>flink-connector-opensearch</artifactId>
 	<version>2.0-SNAPSHOT</version>
-	<name>Flink : Connectors : Opensearch : Parent</name>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
+	
+	<name>Flink Connector Opensearch</name>
+	
 	<url>https://flink.apache.org</url>
 	<inceptionYear>2022</inceptionYear>
 
@@ -41,13 +38,6 @@ under the License.
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
-
-	<modules>
-		<module>flink-connector-opensearch</module>
-		<module>flink-connector-opensearch-e2e-tests</module>
-		<module>flink-sql-connector-opensearch</module>
-	</modules>
 
 	<properties>
 		<flink.version>1.17.0</flink.version>
