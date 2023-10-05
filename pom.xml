@@ -41,6 +41,10 @@ under the License.
 
 	<properties>
 		<flink.version>1.17.0</flink.version>
+
+		<target.java.version>11</target.java.version>
+		<maven.compiler.source>${target.java.version}</maven.compiler.source>
+		<maven.compiler.target>${target.java.version}</maven.compiler.target>
 		
 		<commons-compress.version>1.23.0</commons-compress.version>
 		<jackson-bom.version>2.13.4.20221013</jackson-bom.version>
@@ -295,14 +299,6 @@ under the License.
 			<scope>test</scope>
 		</dependency>
 
-		<!-- ArchUit test dependencies -->
-
-		<dependency>
-			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-architecture-tests-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
 
 	<!-- This section defines the module versions that are used if nothing else is specified. -->
@@ -487,6 +483,11 @@ under the License.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${target.java.version}</source>
+					<target>${target.java.version}</target>
+				</configuration>
 			</plugin>
 
 			<plugin>
